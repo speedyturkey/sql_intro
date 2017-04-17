@@ -23,7 +23,7 @@ One of the most important database concepts is the "table". A table is like a sp
 | 1004 | Mindy | Brown | Release Review | Johnson Law Firm
 
 It is easy to query this table to get information we are interested in. For example, the following
-query would return the rows where Claim Status is "In Review":
+query would return the rows where claim_status is "In Review":
 
 ~~~
 select *
@@ -56,12 +56,12 @@ and the firms table is where we keep information about firms.
 
 Notice the field called firm_id. This field is very important - it is called a "primary key" and is used to identify an individual row and to ensure that all rows are unique. Now that we have this field, we can update our claims table as follows:
 
-claim_number | first_name | last_name | claim_status | firm_id |
+claim_id | first_name | last_name | claim_status | firm_id |
 ------------ | ---------- | --------- | ------------ | -------- |
-1245 | Dorothy | Wilson | In Review | 1
-1246 | Jane | Smith | In Review | 2
-1247 | Dawn | Jones | Release Issued | 3
-1248 | Mindy | Brown | Release Review | 1
+1001 | Dorothy | Wilson | In Review | 1
+1002 | Jane | Smith | In Review | 2
+1003 | Dawn | Jones | Release Issued | 3
+1004 | Mindy | Brown | Release Review | 1
 
 Instead of the firm name, we are showing the firm_id in the claims table. This is called a "foreign key", which means that it points to another table's primary key.
 
