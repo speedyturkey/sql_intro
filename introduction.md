@@ -21,25 +21,134 @@ One of the most important database concepts is the "table". A table is like a sp
 | 1002 | Jane | Smith | In Review | Lopez & Associates
 | 1003 | Dawn | Jones | Release Issued | Roy G. Biv, Attorney At Law
 | 1004 | Mindy | Brown | Release Review | Johnson Law Firm
+| 1005 | Jane | McDougall | Release Verified | The Smith Firm
 
-It is easy to query this table to get information we are interested in. For example, the following
-query would return the rows where claim_status is "In Review":
+The simplest query we can write to get data from this table looks like this:
+~~~
+# Query 1
+select *
+from claims
+~~~
+
+Executing this query will return data from the `claims` table. There are no filters, so it will return all of the records (rows) in the table. The query also indicates which fields should be returned: the special operator `*` means "all fields". In English, you might write this query as: "select all fields (columns) from the claims table, with no filters". The following query would return exactly the same results:
 
 ~~~
+# Query 2
+select claim_id, first_name, last_name, claim_status, law_firm
+from claims
+~~~
+
+The only difference between Query 1 and Query 2 is that Query 2 lists each field individually instead of using `*` - but the results are the same.
+
+If we didn't need all of the fields, we could write this query:
+
+~~~
+# Query 3
+select law_firm, first_name, last_name
+from claims
+~~~
+
+Query 3 returns the same number of rows as Query 2, but only the three fields we wanted. Notice that the order of the fields has changed - you can type the fields you want in any order you like.
+
+What if we wanted a query that would only return certain rows? SQL allows us to filter using almost any criteria imaginable using the keyword `where`. Consider this query:
+
+~~~
+# Query 4
+select *
+from claims
+where first_name = 'Jane'
+~~~
+
+This query returns the following two rows:
+
+| claim_id | first_name | last_name | claim_status | law_firm |
+| ------------ | ---------- | --------- | ------------ | -------- |
+| 1002 | Jane | Smith | In Review | Lopez & Associates
+| 1005 | Jane | McDougall | Release Verified | The Smith Firm
+
+Notice that the name Jane is surrounded by single quotes: `'Jane'`. It is necessary to use single quotes to tell the database that Jane is a string of text, instead of the name of a column, table, or something else.
+
+Here is another example:
+
+~~~
+# Query 5
 select *
 from claims
 where claim_status = 'In Review'
 ~~~
 
+| claim_id | first_name | last_name | claim_status | law_firm |
+| ------------ | ---------- | --------- | ------------ | -------- |
+| 1001 | Dorothy | Wilson | In Review | Johnson Law Firm
+| 1002 | Jane | Smith | In Review | Lopez & Associates
+
 If we just wanted the claim number and last name, we could use this query instead:
 
 ~~~
-select claim_number, last_name
+# Query 6
+select claim_id, last_name
 from claims
 where claim_status = 'In Review'
 ~~~
 
-There are a couple of problems with this simple table. What if we want to store more information about the law firms, such as address or attorney names? There is no place for that data. What if the name of a law firm changes? We would have to update every single claim record associated with that law firm.
+| claim_id | last_name |
+| ------------ | ---------- |
+| 1002 | Smith |
+| 1005 | McDougall |
+
+You can even filter using more than one criteria in the "where" clause of your query:
+
+~~~
+# Query 6
+select *
+from claims
+where
+  first_name = 'Jane'
+  or claim_status = 'In Review'
+~~~
+
+This will return the following three rows, where _either_ of the conditions specified is true. Note that this time, the where clause is spread out over several lines - for the most part, SQL does not care about line breaks. This allows us to write queries that are easy to read.
+
+| claim_id | first_name | last_name | claim_status | law_firm |
+| ------------ | ---------- | --------- | ------------ | -------- |
+| 1001 | Dorothy | Wilson | In Review | Johnson Law Firm
+| 1002 | Jane | Smith | In Review | Lopez & Associates
+| 1005 | Jane | McDougall | Release Verified | The Smith Firm
+
+The following query uses the `and` operator instead of `or`. Not surprisingly, this query returns only one row: where _both_ of the conditions specified are true.
+
+~~~
+# Query 7
+select *
+from claims
+where
+  first_name = 'Jane'
+  and claim_status = 'In Review'
+~~~
+
+| claim_id | first_name | last_name | claim_status | law_firm |
+| ------------ | ---------- | --------- | ------------ | -------- |
+| 1002 | Jane | Smith | In Review | Lopez & Associates |
+
+We can also filter using numeric criteria, like in the following query.
+
+~~~
+# Query 8
+select *
+from claims
+where
+  claim_id > 1002
+~~~
+
+This returns the three rows where claim_id is greater than 1002.
+
+| claim_id | first_name | last_name | claim_status | law_firm |
+| ------------ | ---------- | --------- | ------------ | -------- |
+| 1003 | Dawn | Jones | Release Issued | Roy G. Biv, Attorney At Law
+| 1004 | Mindy | Brown | Release Review | Johnson Law Firm
+| 1005 | Jane | McDougall | Release Verified | The Smith Firm
+
+There are a couple of problems with our simple  `claims` table. What if we want to store more information about the law firms, such as address or attorney names? There is no place for that data. What if the name of a law firm changes? We would have to update every single claim record associated with that law firm.
 
 The better way to handle this would be to have a separate table for law firms. Consider this:
 
